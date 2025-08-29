@@ -1,0 +1,39 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: pillcart-backend
+    runtime: node
+    plan: free  # Change to 'starter' or higher for production
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pillcart-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://your-frontend-name.netlify.app
+      # Add your Stripe keys here
+      - key: STRIPE_SECRET_KEY
+        value: sk_test_your_stripe_secret_key_here
+      - key: STRIPE_WEBHOOK_SECRET
+        value: whsec_your_webhook_secret_here
+      # Optional: Google Cloud Storage
+      - key: GOOGLE_CLOUD_PROJECT_ID
+        value: your_project_id
+      - key: GOOGLE_CLOUD_STORAGE_BUCKET
+        value: your_bucket_name
+
+databases:
+  # PostgreSQL Database (will be created automatically)
+  - name: pillcart-db
+    databaseName: pillcart
+    user: pillcart_user
+    plan: free  # Change to 'starter' or higher for production
